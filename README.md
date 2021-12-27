@@ -3,3 +3,9 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
 编译制导
 ---------
+
+编译程序使用的语句为
+
+.. code:: bash
+
+   gcc hello.cpp -o hello -fopenmp -lstdc++
