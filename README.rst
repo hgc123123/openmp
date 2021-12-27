@@ -63,3 +63,14 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
    copyin：用来指定一个threadprivate类型的变量需要用主线程同名变量进行初始化；
 
    default：用来指定并行域内的变量的使用方式，缺省是shared。
+
+API函数
+-------
+
+除上述编译制导指令之外，OpenMP还提供了一组API函数用于控制并发线程的某些行为，下面是一些常用的OpenMP API函数以及说明：
+
+.. code:: bash
+
+   omp_get_thread_num  返回线程的编号
+   omp_get_num_threads 返回并行域中线程的总数
+   omp_in_parallel     返回当前是否在并行域中
