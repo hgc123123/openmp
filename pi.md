@@ -17,7 +17,7 @@ int main()
         sum+=i;
     }
     float endTime=omp_get_wtime();
-    cout<<"The total sum of n! is: "<<sum<<"cost time is: "<<(endTime-startTime)<<endl;
+    cout<<"The total sum of n! is: "<<sum<<", cost time is: "<<(endTime-startTime)<<endl;
     //float endTime=omp_get_wtime();
     sum=0;
     startTime=omp_get_wtime();
@@ -26,14 +26,14 @@ int main()
         sum+=i;
     }
      endTime=omp_get_wtime();
-    cout<<"The total sum of n! is: "<<sum<<"cost time is: "<<(endTime-startTime)<<endl;
+    cout<<"The total sum of n! is: "<<sum<<", cost time is: "<<(endTime-startTime)<<endl;
 
     return 0;
 }
 
 [hpchgc@node838 ~]$ ./pi 
 100000000
-The total sum of n! is: 987459712cost time is: 0.0625
+The total sum of n! is: 987459712, cost time is: 0.0625
 
 The total sum of n! is: 987459712, cost time is: 0.1875
 ```
