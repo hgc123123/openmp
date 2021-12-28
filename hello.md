@@ -92,7 +92,9 @@ int main()
 线程的编号为：1
 ```
 
+
 ##OpenMP效率提升以及不同线程数效率对比
+------
 
 ```
 #include<iostream>
