@@ -4,8 +4,8 @@
 
 parallel制导指令用来创建并行域，后边跟一个大括号，将并行执行的代码放在一起
 
-.. code:: bash
 
+```
    #include<iostream>
    #include<omp.h>
    using namespace std;
@@ -32,7 +32,7 @@ parallel制导指令用来创建并行域，后边跟一个大括号，将并行
 
 
    Test
-
+```
 .. code:: bash
 
    #include<iostream>
