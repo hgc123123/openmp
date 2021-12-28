@@ -1,7 +1,7 @@
-programs' name is hello.cpp
+#programs' name is hello.cpp
 =============================
 
-pragma omp parallel 
+##pragma omp parallel 
 -------------------
 
 parallel制导指令用来创建并行域，后边跟一个大括号，将并行执行的代码放在一起
