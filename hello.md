@@ -93,7 +93,7 @@ int main()
 ```
 
 
-##OpenMP效率提升以及不同线程数效率对比
+## OpenMP效率提升以及不同线程数效率对比
 
 ```
 #include<iostream>
