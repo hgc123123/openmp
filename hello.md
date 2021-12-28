@@ -6,32 +6,32 @@ parallel制导指令用来创建并行域，后边跟一个大括号，将并行
 
 
 ```
-   #include<iostream>
-   #include<omp.h>
-   using namespace std;
-   int main()
-   {
-       #pragma omp parallel
-       {
-           cout<<"Test "<<endl;
-       };
-       return 0;
-   }
+#include<iostream>
+#include<omp.h>
+using namespace std;
+int main()
+{
+#pragma omp parallel
+{
+   cout<<"Test "<<endl;
+};
+return 0;
+}
 
-   gcc hello.cpp -o hello -fopenmp -lstdc++
+gcc hello.cpp -o hello -fopenmp -lstdc++
 
-   ./hello
-   [hpchgc@cas517 OpenMP]$ ./test
-   Test Test Test Test 
-   Test Test Test 
-
-
-   Test 
-
-   Test 
+./hello
+[hpchgc@cas517 OpenMP]$ ./test
+Test Test Test Test 
+Test Test Test 
 
 
-   Test
+Test 
+
+Test 
+
+
+Test
 ```
 .. code:: bash
 
