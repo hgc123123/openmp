@@ -1,3 +1,4 @@
+# #pragma omp parallel for reduction(+:sum)
 ```
 #include <iostream>
 #include <omp.h>
