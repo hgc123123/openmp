@@ -1,5 +1,5 @@
 # programs' name is hello.cpp
----
+
 ## pragma omp parallel 
 
 parallel制导指令用来创建并行域，后边跟一个大括号，将并行执行的代码放在一起
@@ -59,7 +59,7 @@ Test
 ```
 上述程序输出之所以会出现空行是因为在其中一个线程输出字符“Test”之后还没有来得及换行时，另一个线程直接输出了字符“Test”。
 
-##pragma omp parallel for
+## pragma omp parallel for
 
 parallel for用来生成一个并行域，并将多个任务在并行域之间分配，可以使用系统默认线程数，也可以使用num_threads指定
 
