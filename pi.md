@@ -30,4 +30,10 @@ int main()
 
     return 0;
 }
+
+[hpchgc@node838 ~]$ ./pi 
+100000000
+The total sum of n! is: 987459712cost time is: 0.0625
+
+The total sum of n! is: 987459712, cost time is: 0.1875
 ```
