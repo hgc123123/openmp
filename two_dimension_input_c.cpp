@@ -1,6 +1,6 @@
-#include<iostream>
+#include<stdlib.h>
+#include<stdio.h>
 #include<omp.h>
-using namespace std;
 
 float **create_rand_nums(int rows,int columns){
     float **rand_nums=(float **)malloc(sizeof(float *)*rows);
@@ -19,10 +19,10 @@ int main()
     two_dimensions=create_rand_nums(4,4);
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-	    cout<<two_dimensions[i][j]<<" ";
+	    printf("%f ",two_dimensions[i][j]);
 	}
-	cout<<endl;
+	printf("\n");
     }
-    return 1;
     free(two_dimensions);
+    return 1;
 }
