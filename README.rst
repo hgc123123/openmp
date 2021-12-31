@@ -8,6 +8,18 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
    gcc hello.cpp -o hello -fopenmp -lstdc++
 
+使用intel编译程序使用的语句为
+
+.. code:: bash
+
+   module load intel-oneapi-compilers/2021.4.0
+   module load intel-oneapi-mpi/2021.4.0
+   module load intel-oneapi-mkl/2021.4.0
+
+   icc -qopenmp -c pi.cpp -o pi.o
+   icc -qopenmp pi.o  -o pi
+   ./pi
+
 编译制导
 ---------
 
