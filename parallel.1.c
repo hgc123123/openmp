@@ -34,3 +34,5 @@ int main(){
     }
     return 0;
 }
+
+g++ parallel.1.c -o parallel.1 -fopenmp -lstdc++
