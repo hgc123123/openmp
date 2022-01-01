@@ -86,3 +86,5 @@ API函数
    omp_get_thread_num  返回线程的编号
    omp_get_num_threads 返回并行域中线程的总数
    omp_in_parallel     返回当前是否在并行域中
+   omp_get_nested      判断系统是否支持并行嵌套
+   omp_set_nested      启用或关闭并行嵌套
