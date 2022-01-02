@@ -8,6 +8,18 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
    gcc hello.cpp -o hello -fopenmp -lstdc++
 
+使用intel编译程序使用的语句为
+
+.. code:: bash
+
+   module load intel-oneapi-compilers/2021.4.0
+   module load intel-oneapi-mpi/2021.4.0
+   module load intel-oneapi-mkl/2021.4.0
+
+   icc -qopenmp -c pi.cpp -o pi.o
+   icc -qopenmp pi.o  -o pi
+   ./pi
+
 编译制导
 ---------
 
@@ -74,3 +86,6 @@ API函数
    omp_get_thread_num  返回线程的编号
    omp_get_num_threads 返回并行域中线程的总数
    omp_in_parallel     返回当前是否在并行域中
+   omp_get_nested      判断系统是否支持并行嵌套
+   omp_set_nested      启用或关闭并行嵌套
+   omp_set_dynamic     启用或关闭线程数目的动态改变
