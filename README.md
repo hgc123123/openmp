@@ -211,6 +211,32 @@ j=9,ThreadId=3
 j=10,ThreadId=3
 j=11,ThreadId=3
 j=18,ThreadId=1
+
+#pragma omp parallel for schedule(guided，2) __最后迭代块大小将为2__
+for(int i=0;i<20;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
+
+[hpchgc@node341 openmp]$ ./schedule  //export OMP_NUM_THREADS=4
+j=0,ThreadId=0
+j=1,ThreadId=0
+j=2,ThreadId=0
+j=3,ThreadId=0
+j=4,ThreadId=0
+j=14,ThreadId=0
+j=15,ThreadId=0
+j=9,ThreadId=3
+j=10,ThreadId=3
+j=11,ThreadId=3
+j=5,ThreadId=2
+j=6,ThreadId=2
+j=7,ThreadId=2
+j=8,ThreadId=2
+j=16,ThreadId=0
+j=17,ThreadId=0
+j=12,ThreadId=1
+j=13,ThreadId=1
+j=18,ThreadId=3
+j=19,ThreadId=3
 ```
    shared：指定一个或多个变量为多个线程间的共享变量；
 
