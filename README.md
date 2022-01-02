@@ -101,8 +101,24 @@ parallel for：parallel和for指令的结合，也是用在for循环语句之前
 
    num_threads：指定并行域内的线程的数目；
 
-   schedule：指定for任务分担中的任务分配调度类型；
+schedule：子句schedule (type,[,size]),type为static、dynamic、runtime、size可用可不用，调度类型为runtime时size参数未非法  __任务分担类__
+```
+#pragma omp parallel for schedule(static)
+for(int i=0;i<10;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
 
+[username@node341 openmp]$ ./schedule 
+j=1,ThreadId=1
+j=0,ThreadId=0
+j=6,ThreadId=6
+j=3,ThreadId=3
+j=4,ThreadId=4
+j=7,ThreadId=7
+j=9,ThreadId=9
+j=5,ThreadId=5
+j=8,ThreadId=8
+j=2,ThreadId=2
+```
    shared：指定一个或多个变量为多个线程间的共享变量；
 
    ordered：用来指定for任务分担域内指定代码段需要按照串行循环次序执行；
