@@ -23,14 +23,14 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 ```
 ## 编译制导
 
-- fff
-- ff
--
--
+- 并行域控制类
+- 任务分担类
+- 同步控制类
+- 数据环境类
 
 编译制导指令以#pragma omp 开始，后边跟具体的功能指令，格式如：#pragma omp 指令[子句[,子句] …]。常用的功能指令如下：
 
-parallel：用在一个结构块之前，表示这段代码将被多个线程并行执行；
+parallel：用在一个结构块之前，表示这段代码将被多个线程并行执行；[并行域控制类]
 
 ```
 #pragma omp parallel [for | sections] [子句[子句]...]
@@ -43,7 +43,22 @@ example:
 
 ```
 
-   for：用于for循环语句之前，表示将循环计算任务分配到多个线程中并行执行，以实现任务分担，必须由编程人员自己保证每次循环之间无数据相关性;
+for：用于for循环语句之前，表示将循环计算任务分配到多个线程中并行执行，以实行任务分担，保证每次循环之间无数据相关性,单独使用不会实行并行执行，也不会加快运行速度，需配合parallel,表示for循环的代码将会被多个线程执行。若一个parallel并行域中有多个for循环，则会被依次执行。 [任务分担类]
+```
+#pragma omp [parallel] for [子句]
+
+example:
+#pragma omp for
+for(j=0;j<4;j++)	
+    printf("j = %d,ThreadId = %d\n",j,omp_get_thread_num());
+
+[username@node341 openmp]$ ./for
+j=0,ThreadId=0
+j=1,ThreadId=0
+j=2,ThreadId=0
+j=3,ThreadId=0
+```
+
 
    parallel for：parallel和for指令的结合，也是用在for循环语句之前，表示for循环体的代码将被多个线程并行执行，它同时具有并行域的产生和任务分担两个功能;
 
