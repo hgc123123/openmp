@@ -69,9 +69,23 @@ parallel for：parallel和for指令的结合，也是用在for循环语句之前
 }
 ```
 
-   sections：用在可被并行执行的代码段之前，用于实现多个结构块语句的任务分担，可并行执行的代码段各自用section指令标出（注意区分sections和section）;
+sections：用在可被并行执行的代码段之前，用于实现多个结构块语句的任务分担，可并行执行的代码段各自用section指令标出（注意区分sections和section）,用于非迭代计算的任务分类。 __任务分担类__
 
-   parallel sections：parallel和sections两个语句的结合，类似于parallel for;
+parallel sections：parallel和sections两个语句的结合，类似于parallel for;
+
+```
+#pragma omp parallel sections
+{
+    #pragma omp setion
+    {    printf("Section 1 thread = %d\n",omp_get_thread_num());}
+    #pragma omp section
+    {    printf("Section 2 thread = %d\n",omp_get_thread_num());}
+}
+
+[username@node341 openmp]$ ./sections
+Section 1 thread = 0
+Section 2 thread = 1
+```
 
    single：用在并行域内，表示一段只被单个线程执行的代码；
 
