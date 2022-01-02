@@ -4,9 +4,9 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
 编译程序使用的语句为
 
-.. code:: bash
-
+```
    gcc hello.cpp -o hello -fopenmp -lstdc++
+```
 
 使用intel编译程序使用的语句为
 
@@ -49,8 +49,7 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
    threadprivate：用于指定一个或多个变量是线程专用，后面会解释线程专有和私有的区别。
 
-相应的OpenMP子句为:
----------------------
+## 相应的OpenMP子句为:
 
    private：指定一个或多个变量在每个线程中都有它自己的私有副本;
 
@@ -76,16 +75,15 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
    default：用来指定并行域内的变量的使用方式，缺省是shared。
 
-API函数
--------
+## API函数
 
 除上述编译制导指令之外，OpenMP还提供了一组API函数用于控制并发线程的某些行为，下面是一些常用的OpenMP API函数以及说明：
 
-.. code:: bash
-
+```
    omp_get_thread_num  返回线程的编号
    omp_get_num_threads 返回并行域中线程的总数
    omp_in_parallel     返回当前是否在并行域中
    omp_get_nested      判断系统是否支持并行嵌套
    omp_set_nested      启用或关闭并行嵌套
    omp_set_dynamic     启用或关闭线程数目的动态改变
+```
