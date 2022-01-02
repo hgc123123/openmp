@@ -160,6 +160,57 @@ j=2,ThreadId=1
 j=6,ThreadId=3
 j=7,ThreadId=4
 j=3,ThreadId=2
+
+#pragma omp parallel for schedule(dynamic,2) __分配给每个线程size个连续迭代的次数__
+for(int i=0;i<20;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
+[username@node341 openmp]$ ./schedule
+j=0,ThreadId=0
+j=1,ThreadId=0
+j=16,ThreadId=1
+j=17,ThreadId=1
+j=2,ThreadId=4
+j=3,ThreadId=4
+j=18,ThreadId=5
+j=19,ThreadId=5
+j=10,ThreadId=2
+j=11,ThreadId=2
+j=6,ThreadId=3
+j=7,ThreadId=3
+j=8,ThreadId=9
+j=9,ThreadId=9
+j=4,ThreadId=8
+j=5,ThreadId=8
+j=14,ThreadId=7
+j=15,ThreadId=7
+j=12,ThreadId=6
+j=13,ThreadId=6
+
+#pragma omp parallel for schedule(guided) __开始时每个线程分配到较大的迭代块，之后会逐渐递减__
+for(int i=0;i<20;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
+
+[username@node341 openmp]$ ./schedule 
+j=0,ThreadId=0
+j=1,ThreadId=0
+j=2,ThreadId=0
+j=3,ThreadId=0
+j=4,ThreadId=0
+j=12,ThreadId=2
+j=13,ThreadId=2
+j=16,ThreadId=2
+j=5,ThreadId=1
+j=6,ThreadId=1
+j=7,ThreadId=1
+j=8,ThreadId=1
+j=14,ThreadId=0
+j=15,ThreadId=0
+j=19,ThreadId=0
+j=17,ThreadId=2
+j=9,ThreadId=3
+j=10,ThreadId=3
+j=11,ThreadId=3
+j=18,ThreadId=1
 ```
    shared：指定一个或多个变量为多个线程间的共享变量；
 
