@@ -103,7 +103,7 @@ parallel for：parallel和for指令的结合，也是用在for循环语句之前
 
 schedule：子句schedule (type,[,size]),type为static、dynamic、runtime、size可用可不用，调度类型为runtime时size参数未非法  __任务分担类__
 ```
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(static)    __每个线程分配任务均衡__
 for(int i=0;i<10;i++)
     printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
 
@@ -118,6 +118,48 @@ j=9,ThreadId=9
 j=5,ThreadId=5
 j=8,ThreadId=8
 j=2,ThreadId=2
+
+
+#pragma omp parallel for schedule(static,2) __size为分配给给个线程的size个连续的迭代计算
+for(int i=0;i<10;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
+
+[username@node341 openmp]$ ./schedule 
+j=0,ThreadId=0
+j=1,ThreadId=0
+j=8,ThreadId=4
+j=9,ThreadId=4
+j=4,ThreadId=2
+j=5,ThreadId=2
+j=6,ThreadId=3
+j=7,ThreadId=3
+j=2,ThreadId=1
+j=3,ThreadId=1
+
+#pragma omp parallel for schedule(dynamic) __较快的线程会分到更多的线程__
+for(int i=0;i<20;i++)
+    printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
+[hpchgc@node341 openmp]$ ./schedule
+j=0,ThreadId=0
+j=10,ThreadId=0
+j=11,ThreadId=0
+j=12,ThreadId=0
+j=13,ThreadId=0
+j=14,ThreadId=0
+j=15,ThreadId=0
+j=16,ThreadId=0
+j=17,ThreadId=0
+j=18,ThreadId=0
+j=19,ThreadId=0
+j=4,ThreadId=7
+j=9,ThreadId=8
+j=1,ThreadId=9
+j=5,ThreadId=6
+j=8,ThreadId=5
+j=2,ThreadId=1
+j=6,ThreadId=3
+j=7,ThreadId=4
+j=3,ThreadId=2
 ```
    shared：指定一个或多个变量为多个线程间的共享变量；
 
