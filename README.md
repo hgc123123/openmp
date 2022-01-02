@@ -23,9 +23,25 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 ```
 ## 编译制导
 
+. fff
+. ff
+.
+.
+
 编译制导指令以#pragma omp 开始，后边跟具体的功能指令，格式如：#pragma omp 指令[子句[,子句] …]。常用的功能指令如下：
 
-   parallel：用在一个结构块之前，表示这段代码将被多个线程并行执行；
+parallel：用在一个结构块之前，表示这段代码将被多个线程并行执行；
+
+```
+#pragma omp parallel [for | sections] [子句[子句]...]
+
+example:
+#pragma omp parallel num_threads(8)
+{
+    printf("Hello world,thread id is: ",omp_get_thread_num());
+}
+
+```
 
    for：用于for循环语句之前，表示将循环计算任务分配到多个线程中并行执行，以实现任务分担，必须由编程人员自己保证每次循环之间无数据相关性;
 
@@ -86,4 +102,11 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
    omp_get_nested      判断系统是否支持并行嵌套
    omp_set_nested      启用或关闭并行嵌套
    omp_set_dynamic     启用或关闭线程数目的动态改变
+```
+
+## 环境变量
+
+```
+OMP_SCHEDULE、OMP_NUM_THREADS、OMP_DYNAMIC、OMP_NESTED等。
+
 ```
