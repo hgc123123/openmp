@@ -25,7 +25,7 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 
 - 并行域控制类
 - 任务分担类
-- 同步控制类
+- 同步控制类(互斥锁和事件同步类)
 - 数据环境类
 
 编译制导指令以#pragma omp 开始，后边跟具体的功能指令，格式如：#pragma omp 指令[子句[,子句] …]。常用的功能指令如下：
@@ -87,7 +87,7 @@ Section 1 thread = 0
 Section 2 thread = 1
 ```
 
-single：用在并行域内，表示一段只被单个线程执行的代码,没有nowait则其它线程需在该指令结束处隐式同步点同步，否则其它线程继续向下执行
+single：用在并行域内，表示一段只被单个线程执行的代码,没有nowait则其它线程需在该指令结束处隐式同步点同步，否则其它线程继续向下执行,__nowait：不需要等待，下面的线程可以先于它执行执行__
 ```
 #pragma omp parallel
 {	
@@ -116,13 +116,59 @@ Work on 2 parallely.1
 Work on 2 parallely.0
 ```
 
-   critical：用在一段代码临界区之前，保证每次只有一个OpenMP线程进入；
+互斥锁：有critical、atomic和API中的互斥函数
+critical：用在一段代码临界区之前，保证每次只有一个OpenMP线程进入；__同步控制类(互斥锁)__
+```
+#include<stdio.h>
+#include<omp.h>
+int main(){
+    int arx[]={1,2,3,4,5};
+    int ary[]={4,6,7,8,9};
+    int max_num_x=0;
+    int max_num_y=0;
+    #pragma omp parallel for
+    for(int i=0;i<5;i++)
+    {
+        #pragma omp critical (max_arx)
+	if(arx[i]>max_num_x)
+    	    max_num_x=arx[i];
+	#pragma omp critical (max_ary)
+	if(ary[i]>max_num_y)
+	    max_num_y=ary[i];	
+    }
+    printf("max_x=%d,max_y=%d\n",max_num_x,max_num_y);
+    return 0;
+}
+
+[username@node668 openmp]$ ./critical 
+max_x=5,max_y=9
+```
 
    flush：保证各个OpenMP线程的数据影像的一致性；
 
    barrier：用于并行域内代码的线程同步，线程执行到barrier时要停下等待，直到所有线程都执行到barrier时才继续往下执行；
 
-   atomic：用于指定一个数据操作需要原子性地完成；
+atomic：用于指定一个数据操作需要原子性地完成。（同步控制类—互斥锁）
+```
+#include<stdio.h>
+#include<omp.h>
+int main(){
+    int counter=0;
+    #pragma omp parallel
+    {
+        for(int i=0;i<5000;i++)
+        {
+            #pragma omp atomic
+            counter++;
+        }
+    }
+    printf("counter=%d\n",counter);
+    return 0;
+}
+
+[username@node668 openmp]$ ./atomic 
+counter=10000
+```
 
    master：用于指定一段代码由主线程执行；
 
