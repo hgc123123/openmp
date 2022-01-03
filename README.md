@@ -87,7 +87,34 @@ Section 1 thread = 0
 Section 2 thread = 1
 ```
 
-   single：用在并行域内，表示一段只被单个线程执行的代码；
+single：用在并行域内，表示一段只被单个线程执行的代码,没有nowait则其它线程需在该指令结束处隐式同步点同步，否则其它线程继续向下执行
+```
+#pragma omp parallel
+{	
+    #pragma omp single
+        printf("Beginning work 1.\n");
+    printf("Work on 1 parallely.%d\n",omp_get_thread_num());
+    #pragma omp single
+        printf("Finishing work 1.\n");
+    #pragma omp single nowait
+        printf("Beginning work 2.\n");
+    printf("Work on 2 parallely.%d\n",omp_get_thread_num());
+}
+
+
+[username@node668 openmp]$ ./single 
+Beginning work 1.
+Work on 1 parallely.0
+Finishing work 1.
+Work on 1 parallely.3
+Work on 1 parallely.2
+Work on 1 parallely.1
+Work on 2 parallely.3
+Beginning work 2.
+Work on 2 parallely.2
+Work on 2 parallely.1
+Work on 2 parallely.0
+```
 
    critical：用在一段代码临界区之前，保证每次只有一个OpenMP线程进入；
 
