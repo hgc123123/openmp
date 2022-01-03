@@ -148,7 +148,7 @@ max_x=5,max_y=9
 
    barrier：用于并行域内代码的线程同步，线程执行到barrier时要停下等待，直到所有线程都执行到barrier时才继续往下执行；
 
-atomic：用于指定一个数据操作需要原子性地完成。（同步控制类—互斥锁）
+atomic：用于指定一个数据操作需要原子性地完成。__同步控制类—互斥锁__
 ```
 #include<stdio.h>
 #include<omp.h>
