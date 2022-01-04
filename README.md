@@ -26,7 +26,7 @@ OpenMP编程模型以线程为基础，通过编译制导指令制导并行化�
 - 并行域控制类
 - 任务分担类
 - 同步控制类(互斥锁和事件同步类)
-- 数据环境类
+- 数据环境类(与指令parallel、for和section相结合，控制变量的作用范围)
 
 编译制导指令以#pragma omp 开始，后边跟具体的功能指令，格式如：#pragma omp 指令[子句[,子句] …]。常用的功能指令如下：
 
@@ -204,21 +204,215 @@ int main()
 0     -
 ```
 
-   master：用于指定一段代码由主线程执行；
+master：用于指定一段代码由主线程执行；__事件同步__
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+     int i,a[5];
+     #pragma omp parallel
+     {
+         #pragma omp for 
+	 for(i=0;i<5;i++)
+         {
+	     a[i]=i*i;
+	 }
+	 #pragma omp master
+	 for(i=0;i<5;i++)
+ 	 {
+	     printf("a[%d] = %d,threadId = %d\n",i,a[i],omp_get_thread_num());
+	 }
+      }
+      return 0;
+}
+
+[username@node169 openmp]$ ./mater
+a[0] = 0,threadId = 0
+a[1] = 1,threadId = 0
+a[2] = 4,threadId = 0
+a[3] = 9,threadId = 0
+a[4] = 16,threadId = 0
+```
 
    threadprivate：用于指定一个或多个变量是线程专用，后面会解释线程专有和私有的区别。
 
 ## 相应的OpenMP子句为:
 
-   private：指定一个或多个变量在每个线程中都有它自己的私有副本;
+private：指定一个或多个变量在每个线程中都有它自己的私有副本, __环境变量__
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int k=100;
+    #pragma omp parallel for private(k)
+    for(int i=0;i<5;i++)
+    {
+        k+=i;
+        printf("k=%d\n",k);
+    }
+    printf("last k is %d\n",k);
+    return 0;
+}
+[hpchgc@node169 openmp]$ ./private
+k=0
+k=4
+k=3
+k=1
+k=2
+last k is 100
 
-   firstprivate：指定一个或多个变量在每个线程都有它自己的私有副本，并且私有变量要在进入并行域或任务分担域时，继承主线程中的同名变量的值作为初值；
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int A=100;
+    #pragma omp parallel for private(A)
+    for(int i=0;i<10;i++)
+    {
+        printf("Thread ID: %d, %d, %d\n",omp_get_thread_num(),i,A);
+	A=i;
+    }
+    printf("%d\n",A);
+    return 0;
+}
+[username@node169 openmp]$ ./private
+Thread ID: 4, 4, 0
+Thread ID: 9, 9, 0
+Thread ID: 8, 8, 0
+Thread ID: 3, 3, 0
+Thread ID: 2, 2, 0
+Thread ID: 7, 7, 0
+Thread ID: 1, 1, 0
+Thread ID: 5, 5, 0
+Thread ID: 6, 6, 0
+Thread ID: 0, 0, 0
+100
+```
 
-   lastprivate：是用来指定将线程中的一个或多个私有变量的值在并行处理结束后复制到主线程中的同名变量中，负责拷贝的线程是for或sections任务分担中的最后一个线程；
+firstprivate：指定一个或多个变量在每个线程都有它自己的私有副本，并且私有变量要在进入并行域或任务分担域时，继承主线程中的同名变量的值作为初值；
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int k=100;
+    #pragma omp parallel for firstprivate(k)
+    for(int i=0;i<5;i++)
+    {
+	k+=i;
+        printf("k=%d\n",k);
+    }
+    printf("last k is %d\n",k);
+    return 0;
+}
+[hpchgc@node169 openmp]$ ./firstprivate 
+k=100
+k=101
+k=102
+k=103
+k=104
+last k is 100
+
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int A=100;
+    #pragma omp parallel for firstprivate(A)
+    for(int i=0;i<10;i++)
+    {
+	printf("Thread ID: %d, %d, %d\n",omp_get_thread_num(),i,A);
+	A=i;
+    }
+    printf("%d\n",A);
+    return 0;
+}
+[hpchgc@node169 openmp]$ ./firstprivate 
+Thread ID: 7, 7, 100
+Thread ID: 5, 5, 100
+Thread ID: 8, 8, 100
+Thread ID: 1, 1, 100
+Thread ID: 3, 3, 100
+Thread ID: 0, 0, 100
+Thread ID: 2, 2, 100
+Thread ID: 4, 4, 100
+Thread ID: 9, 9, 100
+Thread ID: 6, 6, 100
+100
+
+```
+lastprivate：是用来指定将线程中的一个或多个私有变量的值在并行处理结束后复制到主线程中的同名变量中，负责拷贝的线程是for或sections任务分担中的最后一个线程, __环境变量__
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int A=100;
+    #pragma omp parallel for firstprivate(A),lastprivate(A)
+    for(int i=0;i<10;i++)
+    {
+	A+=i;    
+	printf("Thread ID: %d, %d, %d\n",omp_get_thread_num(),i,A);
+    }
+    printf("%d\n",A);
+    return 0;
+}
+[usrname@node169 openmp]$ ./lastprivate 
+Thread ID: 0, 0, 100
+Thread ID: 6, 6, 106
+Thread ID: 3, 3, 103
+Thread ID: 2, 2, 102
+Thread ID: 9, 9, 109
+Thread ID: 1, 1, 101
+Thread ID: 5, 5, 105
+Thread ID: 7, 7, 107
+Thread ID: 8, 8, 108
+Thread ID: 4, 4, 104
+109
+```
 
    reduction：用来指定一个或多个变量是私有的，并且在并行处理结束后这些变量要执行指定的归约运算，并将结果返回给主线程同名变量;
 
-   nowait：指出并发线程可以忽略其他制导指令暗含的路障同步；
+nowait：指出并发线程可以忽略其他制导指令暗含的路障同步,__事件同步__
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+     int i,j;
+     #pragma omp parallel
+     {
+         #pragma omp for nowait
+	 for(i=0;i<6;i++)
+         {
+	     printf("+\n");
+	 }
+	 #pragma omp for
+	 for(j=0;j<6;j++)
+ 	 {
+	     printf("-    \n");
+	 }
+      }
+      return 0;
+}
+
+[username@node169 openmp]$ ./nowait
++
+-    
++
+-    
++
+-    
++
+-    
++
+-    
++
+-
+
+```
 
    num_threads：指定并行域内的线程的数目；
 
@@ -359,12 +553,15 @@ j=13,ThreadId=1
 j=18,ThreadId=3
 j=19,ThreadId=3
 ```
-   shared：指定一个或多个变量为多个线程间的共享变量；
+shared：指定一个或多个变量为多个线程间的共享变量,不加这句话会有数据竞争
+```
+
+
+```
 
    ordered：用来指定for任务分担域内指定代码段需要按照串行循环次序执行；
 
    copyprivate：配合single指令，将指定线程的专有变量广播到并行域内其他线程的同名变量中；
-
    copyin：用来指定一个threadprivate类型的变量需要用主线程同名变量进行初始化；
 
    default：用来指定并行域内的变量的使用方式，缺省是shared。
