@@ -235,7 +235,56 @@ a[3] = 9,threadId = 0
 a[4] = 16,threadId = 0
 ```
 
-   threadprivate：用于指定一个或多个变量是线程专用，后面会解释线程专有和私有的区别。
+threadprivate：用于指定一个或多个变量是线程专用，后面会解释线程专有和私有的区别。
+```
+#include<stdio.h>
+#include<omp.h>
+int A=100;
+#pragma omp threadprivate(A)
+
+int main()
+{
+    #pragma omp parallel for
+    for(int i=0;i<10;i++)
+    {
+        A++;
+	printf("Thread id is: %d,%d,%d\n",omp_get_thread_num(),i,A);
+    }
+    printf("Global A: %d\n",A);
+    #pragma omp parallel for
+    for(int i=0;i<10;i++)
+    {
+        A++;
+	printf("Thread id is: %d,%d,%d\n",omp_get_thread_num(),i,A);
+    }
+    printf("Global A: %d\n",A);
+    return 0;
+}
+
+[hpchgc@node169 openmp]$ ./threadprivate
+Thread id is: 0,0,101
+Thread id is: 2,2,101
+Thread id is: 1,1,101
+Thread id is: 7,7,101
+Thread id is: 6,6,101
+Thread id is: 3,3,101
+Thread id is: 4,4,101
+Thread id is: 9,9,101
+Thread id is: 5,5,101
+Thread id is: 8,8,101
+Global A: 101
+Thread id is: 5,5,102
+Thread id is: 0,0,102
+Thread id is: 3,3,102
+Thread id is: 8,8,102
+Thread id is: 6,6,102
+Thread id is: 4,4,102
+Thread id is: 1,1,102
+Thread id is: 9,9,102
+Thread id is: 7,7,102
+Thread id is: 2,2,102
+Global A: 102
+```
 
 ## 相应的OpenMP子句为:
 
