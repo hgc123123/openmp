@@ -170,6 +170,40 @@ int main(){
 counter=10000
 ```
 
+互斥锁函数：需释放相应锁空间，否则可能造成多线程程序的死锁
+```
+#include<stdio.h>
+#include<omp.h>
+static omp_lock_t lock;
+int main()
+{
+    int i;
+    omp_init_lock(&lock);
+    #pragma omp parallel for
+    for(int i=0;i<5;i++)
+    {
+        omp_set_lock(&lock);
+	printf("%d + \n",omp_get_thread_num());
+	printf("%d     - \n",omp_get_thread_num());
+	omp_unset_lock(&lock);
+    }
+    omp_destroy_lock(&lock);
+    return 0;
+}
+
+[username@node169 openmp]$ ./lock
+3 +
+3     -
+4 +
+4     -
+2 +
+2     -
+1 +
+1     -
+0 +
+0     -
+```
+
    master：用于指定一段代码由主线程执行；
 
    threadprivate：用于指定一个或多个变量是线程专用，后面会解释线程专有和私有的区别。
