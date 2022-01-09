@@ -796,6 +796,7 @@ a=50 b=54 (expected a=50 b=1049)
    omp_get_nested      判断系统是否支持并行嵌套
    omp_set_nested      启用或关闭并行嵌套
    omp_set_dynamic     启用或关闭线程数目的动态改变
+   omp_get_wtime       返回某个点上的时间
 ```
 
 ## 环境变量
