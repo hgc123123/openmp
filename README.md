@@ -619,7 +619,42 @@ shared：指定一个或多个变量为多个线程间的共享变量,不加这�
    copyprivate：配合single指令，将指定线程的专有变量广播到并行域内其他线程的同名变量中；
    copyin：用来指定一个threadprivate类型的变量需要用主线程同名变量进行初始化；
 
-   default：用来指定并行域内的变量的使用方式，缺省是shared。
+default：用来指定并行域内的变量的使用方式，缺省是shared。使用shared传入并行区域同名变量被当做共享变量处理，不会产生线程私有副本，除非使用private指定。使用none除明确定义的外，线程中用到的变量都必须显式指定为共享还是私有。
+```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int a=50;
+    int i;
+    int b=0;
+    const int N=5;
+    float startTime=omp_get_wtime();
+    #pragma omp parallel for default(shared) 
+    for(i=0;i<N;i++)
+    {
+        b=a+i;
+        printf("Thread id is: %d, i=%d, b=%d\n",omp_get_thread_num(),i,b);
+    }
+    float endTime=omp_get_wtime();
+    printf("a=%d b=%d (expected a=50 b=1049)\n",a,b);
+}
+
+[hpchgc@node171 openmp]$ ./default
+Thread id is: 0, i=0, b=50
+Thread id is: 4, i=4, b=54
+Thread id is: 2, i=2, b=52
+Thread id is: 3, i=3, b=53
+Thread id is: 1, i=1, b=51
+a=50 b=53 (expected a=50 b=1049)
+[hpchgc@node171 openmp]$ ./default
+Thread id is: 0, i=0, b=50
+Thread id is: 4, i=4, b=54
+Thread id is: 2, i=2, b=52
+Thread id is: 1, i=1, b=51
+Thread id is: 3, i=3, b=53
+a=50 b=52 (expected a=50 b=1049)
+```
 
 ## API函数
 
@@ -628,6 +663,7 @@ shared：指定一个或多个变量为多个线程间的共享变量,不加这�
 ```
    omp_get_thread_num  返回线程的编号
    omp_get_num_threads 返回并行域中线程的总数
+   omp_get_max_threads 返回最大线程数
    omp_in_parallel     返回当前是否在并行域中
    omp_get_nested      判断系统是否支持并行嵌套
    omp_set_nested      启用或关闭并行嵌套
