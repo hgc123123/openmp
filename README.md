@@ -210,6 +210,32 @@ int main()
 0     -
 ```
 
+reduction:规约操作
+```
+#pragma omp reduction(operator: variable)
+One of: +, *, -, / (and &, ^, |, &&, ||)
+
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int i;
+    const int N=1000;
+    int sum;
+    #pragma omp parallel for private(i) reduction(+: sum)
+    for(i=0;i<N;i++)
+    {
+        sum+=i;
+    }
+    printf("reduction sum = %d (expected %d)\n",sum,((N-1)*N)/2);
+    return 0;
+}
+
+[user@node171 openmp]$ ./reduction 
+reduction sum = 499500 (expected 499500)
+```
+
+
 master：用于指定一段代码由主线程执行；__事件同步__
 ```
 #include<stdio.h>
@@ -610,8 +636,31 @@ j=19,ThreadId=3
 ```
 shared：指定一个或多个变量为多个线程间的共享变量,不加这句话会有数据竞争
 ```
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int i=0;
+    int sum=0;
+    #pragma omp parallel for private(i) shared(sum) 
+    for(i=0;i<5;i++)
+    {
+        sum=sum+i;
+    }
+    printf("%d\n",i);
+    printf("%d\n",sum);
+    return 0;
+}
 
-
+[hpchgc@node171 openmp]$ ./shared 
+0
+10
+[hpchgc@node171 openmp]$ ./shared 
+0
+3
+[hpchgc@node171 openmp]$ ./shared 
+0
+1
 ```
 
    ordered：用来指定for任务分担域内指定代码段需要按照串行循环次序执行；
