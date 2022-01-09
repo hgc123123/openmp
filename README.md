@@ -148,6 +148,27 @@ int main(){
 
 [username@node668 openmp]$ ./critical 
 max_x=5,max_y=9
+
+
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int i;
+    const int N=1000;
+    int sum;
+    #pragma omp parallel for
+    for(i=0;i<N;i++)
+    {
+	#pragma omp critical(sum)
+        sum+=i;
+    }
+    printf("reduction sum = %d (expected %d)\n",sum,((N-1)*N)/2);
+    return 0;
+}
+
+[user@node171 openmp]$ ./reduction
+reduction sum = 499500 (expected 499500)
 ```
 
    flush：保证各个OpenMP线程的数据影像的一致性；
@@ -174,6 +195,28 @@ int main(){
 
 [username@node668 openmp]$ ./atomic 
 counter=10000
+
+
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int i;
+    const int N=1000;
+    int sum;
+//    #pragma omp parallel for private(i) reduction(+: sum)
+    #pragma omp parallel for
+    for(i=0;i<N;i++)
+    {
+	#pragma omp atomic
+        sum+=i;
+    }
+    printf("reduction sum = %d (expected %d)\n",sum,((N-1)*N)/2);
+    return 0;
+}
+
+[user@node171 openmp]$ ./reduction
+reduction sum = 499500 (expected 499500)
 ```
 
 互斥锁函数：需释放相应锁空间，否则可能造成多线程程序的死锁
@@ -293,7 +336,7 @@ int main()
     return 0;
 }
 
-[hpchgc@node169 openmp]$ ./threadprivate
+[user@node169 openmp]$ ./threadprivate
 Thread id is: 0,0,101
 Thread id is: 2,2,101
 Thread id is: 1,1,101
@@ -336,7 +379,7 @@ int main()
     printf("last k is %d\n",k);
     return 0;
 }
-[hpchgc@node169 openmp]$ ./private
+[user@node169 openmp]$ ./private
 k=0
 k=4
 k=3
@@ -388,7 +431,7 @@ int main()
     printf("last k is %d\n",k);
     return 0;
 }
-[hpchgc@node169 openmp]$ ./firstprivate 
+[user@node169 openmp]$ ./firstprivate 
 k=100
 k=101
 k=102
@@ -410,7 +453,7 @@ int main()
     printf("%d\n",A);
     return 0;
 }
-[hpchgc@node169 openmp]$ ./firstprivate 
+[user@node169 openmp]$ ./firstprivate 
 Thread ID: 7, 7, 100
 Thread ID: 5, 5, 100
 Thread ID: 8, 8, 100
@@ -535,7 +578,7 @@ j=3,ThreadId=1
 #pragma omp parallel for schedule(dynamic) __较快的线程会分到更多的线程__
 for(int i=0;i<20;i++)
     printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
-[hpchgc@node341 openmp]$ ./schedule
+[user@node341 openmp]$ ./schedule
 j=0,ThreadId=0
 j=10,ThreadId=0
 j=11,ThreadId=0
@@ -612,7 +655,7 @@ j=18,ThreadId=1
 for(int i=0;i<20;i++)
     printf("j=%d,ThreadId=%d\n",i,omp_get_thread_num());
 
-[hpchgc@node341 openmp]$ ./schedule  //export OMP_NUM_THREADS=4
+[user@node341 openmp]$ ./schedule  //export OMP_NUM_THREADS=4
 j=0,ThreadId=0
 j=1,ThreadId=0
 j=2,ThreadId=0
@@ -652,13 +695,13 @@ int main()
     return 0;
 }
 
-[hpchgc@node171 openmp]$ ./shared 
+[user@node171 openmp]$ ./shared 
 0
 10
-[hpchgc@node171 openmp]$ ./shared 
+[user@node171 openmp]$ ./shared 
 0
 3
-[hpchgc@node171 openmp]$ ./shared 
+[user@node171 openmp]$ ./shared 
 0
 1
 ```
