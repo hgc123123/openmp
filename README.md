@@ -640,20 +640,56 @@ int main()
     printf("a=%d b=%d (expected a=50 b=1049)\n",a,b);
 }
 
-[hpchgc@node171 openmp]$ ./default
+[user@node171 openmp]$ ./default
 Thread id is: 0, i=0, b=50
 Thread id is: 4, i=4, b=54
 Thread id is: 2, i=2, b=52
 Thread id is: 3, i=3, b=53
 Thread id is: 1, i=1, b=51
 a=50 b=53 (expected a=50 b=1049)
-[hpchgc@node171 openmp]$ ./default
+[user@node171 openmp]$ ./default
 Thread id is: 0, i=0, b=50
 Thread id is: 4, i=4, b=54
 Thread id is: 2, i=2, b=52
 Thread id is: 1, i=1, b=51
 Thread id is: 3, i=3, b=53
 a=50 b=52 (expected a=50 b=1049)
+
+
+
+#include<stdio.h>
+#include<omp.h>
+int main()
+{
+    int a=50;
+    int i;
+    int b=0;
+    const int N=5;
+    float startTime=omp_get_wtime();
+    #pragma omp parallel for default(none) private(i) firstprivate(a) lastprivate(b) 
+    for(i=0;i<N;i++)
+    {
+        b=a+i;
+	printf("Thread id is: %d, i=%d, b=%d\n",omp_get_thread_num(),i,b);
+    }
+    float endTime=omp_get_wtime();
+    printf("a=%d b=%d (expected a=50 b=1049)\n",a,b);
+}
+
+[user@node171 openmp]$ ./default 
+Thread id is: 0, i=0, b=50
+Thread id is: 4, i=4, b=54
+Thread id is: 1, i=1, b=51
+Thread id is: 2, i=2, b=52
+Thread id is: 3, i=3, b=53
+a=50 b=54 (expected a=50 b=1049)
+[user@node171 openmp]$ ./default 
+Thread id is: 0, i=0, b=50
+Thread id is: 1, i=1, b=51
+Thread id is: 2, i=2, b=52
+Thread id is: 3, i=3, b=53
+Thread id is: 4, i=4, b=54
+a=50 b=54 (expected a=50 b=1049)
 ```
 
 ## API函数
